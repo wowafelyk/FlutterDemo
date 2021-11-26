@@ -1,9 +1,9 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_demo/core/logger.dart';
 import 'package:flutter_demo/data/http/dio_factory.dart';
 
 class DioFactoryImpl extends DioFactory {
@@ -16,7 +16,7 @@ class DioFactoryImpl extends DioFactory {
     if (_proxyIp != null) {
       debugPrint('Proxy Enabled');
       (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate;
-      (HttpClient client) {
+          (HttpClient client) {
         client.findProxy = (Uri uri) => 'PROXY $_proxyIp;';
         client.badCertificateCallback =
             (X509Certificate cert, String host, int port) => true;
@@ -35,7 +35,7 @@ class DioFactoryImpl extends DioFactory {
       [
         LogInterceptor(
           requestBody: true,
-          logPrint: (Object obj) => logger.e(
+          logPrint: (Object obj) => log(
             obj.toString(),
           ),
         ),

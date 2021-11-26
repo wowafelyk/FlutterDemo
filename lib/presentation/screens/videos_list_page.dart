@@ -5,6 +5,7 @@ import 'package:flutter_demo/injection/injector.dart';
 import 'package:flutter_demo/presentation/block/video_event.dart';
 import 'package:flutter_demo/presentation/block/video_state.dart';
 import 'package:flutter_demo/presentation/block/videos_list_block.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class VideosListPage extends StatelessWidget {
   const VideosListPage({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class VideosListPage extends StatelessWidget {
         onPressed: () {
           injector
               .get<VideosListBloc>()
-              .add(VideoSearchEvent(searchString: "Test"));
+              .add(VideoSearchEvent(searchString: "Agent 007"));
         },
         child: const Icon(Icons.navigation),
         backgroundColor: Colors.green,
@@ -47,7 +48,17 @@ class VideosView extends StatelessWidget {
         return const Center(child: Text('Oops something went wrong!'));
       case VideoStateStatus.success:
         return VideosLisView(
-            items: (VideoState as SuccessfulLoadingState).videosList);
+            items: (state as SuccessfulLoadingState).videosList);
+      case VideoStateStatus.initial:
+        return const Padding(
+          padding: EdgeInsets.all(24),
+          child: Center(
+              child: Text(
+            "Press button to start search video by titleQuery: \"Agent 007\"",
+            maxLines: 3,
+            textAlign: TextAlign.center,
+          )),
+        );
       case VideoStateStatus.loading:
       default:
         return const Center(child: CircularProgressIndicator());
@@ -65,6 +76,7 @@ class VideosLisView extends StatelessWidget {
     return items.isEmpty
         ? const Center(child: Text('no content'))
         : ListView.builder(
+      itemExtent: 90,
             itemBuilder: (BuildContext context, int index) {
               return ItemHolder(
                 item: items[index],
@@ -86,8 +98,19 @@ class ItemHolder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: ListTile(
-        title: Text(item.name),
+      child: Card(
+        child: ListTile(
+          leading: SizedBox(
+              height: 72,
+              width: 72,
+              child: FadeInImage.memoryNetwork(
+                placeholder: kTransparentImage,
+                image: item.poster,
+              )),
+          title: Text(item.name),
+          subtitle: Text('Type: ${item.type}   Year: ${item.year}'),
+          isThreeLine: true,
+        ),
       ),
     );
   }

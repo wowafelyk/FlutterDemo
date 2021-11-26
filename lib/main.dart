@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/domain/repository/secure_repository.dart';
 import 'package:flutter_demo/injection/dependency_manager.dart';
+import 'package:flutter_demo/injection/injector.dart';
 import 'package:flutter_demo/presentation/screens/videos_list_page.dart';
 
 void main() async {
   await DependencyManager.inject();
+  await injector.get<SecureRepository>().init();
   runApp(const MyApp());
 }
 

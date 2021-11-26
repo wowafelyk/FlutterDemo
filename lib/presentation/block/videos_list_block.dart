@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_demo/core/logger.dart';
 import 'package:flutter_demo/domain/repository/video_repository.dart';
@@ -14,7 +15,7 @@ class VideosListBloc extends Bloc<VideoEvent, VideoState> {
         _loadVideos(event, emit));
 
     on<VideoLoadingSuccess>(
-        (VideoLoadingSuccess event, Emitter<VideoState> emit) =>
+            (VideoLoadingSuccess event, Emitter<VideoState> emit) =>
             emit.call(SuccessfulLoadingState(event.videos)));
 
     on<VideoLoadingError>((VideoLoadingError event, Emitter<VideoState> emit) =>
@@ -23,10 +24,11 @@ class VideosListBloc extends Bloc<VideoEvent, VideoState> {
 
   _loadVideos(VideoSearchEvent event, Emitter<VideoState> emit) {
     emit.call(LoadingVideoState());
-    _videosRepository.loadVideo().then((value) {
+    _videosRepository.loadVideo(videoTitle: event.searchString).then((value) {
       add(VideoLoadingSuccess(value));
-    }, onError: (err) {
-      logger.e(err);
+    }, onError: (err, trace) {
+      debugPrintStack(stackTrace: trace);
+      logger.e("Error while loading videos $err");
       add(VideoLoadingError(err.toString()));
     });
   }
